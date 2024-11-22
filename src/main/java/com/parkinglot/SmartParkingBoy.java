@@ -3,7 +3,7 @@ package com.parkinglot;
 import java.util.Collections;
 import java.util.stream.Collectors;
 
-public class SmartParkingBoy extends ParkingBoy {
+public class SmartParkingBoy extends ParkingBoy implements ParkingBoyStrategy {
     public SmartParkingBoy() {
     }
 

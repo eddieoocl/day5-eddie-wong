@@ -3,7 +3,7 @@ package com.parkinglot;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ParkingBoy {
+public class ParkingBoy implements ParkingBoyStrategy {
     private final List<ParkingLot> parkingLots = new ArrayList<>();
 
     public ParkingBoy() {}

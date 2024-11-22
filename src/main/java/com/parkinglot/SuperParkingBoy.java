@@ -1,6 +1,6 @@
 package com.parkinglot;
 
-public class SuperParkingBoy extends ParkingBoy {
+public class SuperParkingBoy extends ParkingBoy implements ParkingBoyStrategy {
     public SuperParkingBoy() {
     }
 
