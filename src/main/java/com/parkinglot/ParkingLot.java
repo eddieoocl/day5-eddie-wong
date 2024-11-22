@@ -30,11 +30,15 @@ public class ParkingLot {
         return new Ticket(car);
     }
 
-    private boolean isFull() {
+    public boolean isFull() {
         return parkingRecords.size() >= this.capacity;
     }
 
     public int getSize() {
         return this.parkingRecords.size();
+    }
+
+    public int getAvailableCapacity() {
+        return this.capacity - this.parkingRecords.size();
     }
 }

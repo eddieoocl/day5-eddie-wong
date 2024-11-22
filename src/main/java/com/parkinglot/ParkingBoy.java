@@ -13,14 +13,11 @@ public class ParkingBoy {
     }
 
     public Ticket park(Car car) throws NoAvailablePositionException {
-        for (ParkingLot parkingLot : parkingLots) {
-            try {
-                return parkingLot.park(car);
-            } catch (NoAvailablePositionException exception) {
-                continue;
-            }
+        ParkingLot parkingLot = parkingLots.stream().filter(pl -> !pl.isFull()).findFirst().orElse(null);
+        if (parkingLot == null) {
+            throw new NoAvailablePositionException();
         }
-        throw new NoAvailablePositionException();
+        return parkingLot.park(car);
     }
 
     public Car fetch(Ticket ticket) throws UnrecognizedTicketException {
@@ -38,5 +35,9 @@ public class ParkingBoy {
         if (!this.parkingLots.contains(parkingLot)) {
             this.parkingLots.add(parkingLot);
         }
+    }
+
+    public List<ParkingLot> getParkingLots() {
+        return parkingLots;
     }
 }
