@@ -19,6 +19,11 @@ public class ParkingLot {
         return ticket;
     }
 
+    public Car fetch(Ticket ticket) {
+        Car car = parkingRecords.get(ticket);
+        return car;
+    }
+
     private Ticket getTicket(Car car) {
         return new Ticket(car);
     }
