@@ -1,20 +1,17 @@
 package com.parkinglot;
 
-import java.util.Collections;
-import java.util.stream.Collectors;
-
-public class SmartParkingBoy extends ParkingBoy {
-    public SmartParkingBoy() {
+public class SuperParkingBoy extends ParkingBoy {
+    public SuperParkingBoy() {
     }
 
-    public SmartParkingBoy(ParkingLot parkingLot) {
+    public SuperParkingBoy(ParkingLot parkingLot) {
         super(parkingLot);
     }
 
     @Override
     public Ticket park(Car car) throws NoAvailablePositionException {
         ParkingLot parkingLot = this.getParkingLots().stream()
-                .sorted((parkingLot1, parkingLot2) -> parkingLot2.getAvailableCapacity() - parkingLot1.getAvailableCapacity())
+                .sorted((parkingLot1, parkingLot2) -> Float.compare(parkingLot2.getAvailablePositionRate(), parkingLot1.getAvailablePositionRate()))
                 .filter(pl -> !pl.isFull()).findFirst().orElse(null);
         if (parkingLot == null) {
             throw new NoAvailablePositionException();
