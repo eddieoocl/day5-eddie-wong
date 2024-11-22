@@ -12,6 +12,7 @@ public class ParkingLot {
 
     public Ticket park(Car car) {
         if (this.isFull()) {
+            System.out.println("No available position.");
             return null;
         }
         Ticket ticket = getTicket(car);
@@ -20,6 +21,9 @@ public class ParkingLot {
     }
 
     public Car fetch(Ticket ticket) {
+        if (!parkingRecords.containsKey(ticket)) {
+            System.out.println("Unrecognized parking ticket.");
+        }
         return parkingRecords.remove(ticket);
     }
 

@@ -3,7 +3,7 @@ package com.parkinglot;
 import java.util.Objects;
 
 public class Car {
-    private String license;
+    private final String license;
 
     public Car(String license) {
         this.license = license;

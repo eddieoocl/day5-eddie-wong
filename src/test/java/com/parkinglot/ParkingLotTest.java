@@ -1,10 +1,21 @@
 package com.parkinglot;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class ParkingLotTest {
+    private ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+
+    @BeforeEach
+    public void setup() {
+        System.setOut(new PrintStream(outContent));
+    }
+
     @Test
     public void should_return_ticket_when_park_given_a_car() {
         // Given
@@ -91,5 +102,52 @@ public class ParkingLotTest {
 
         // Then
         assertNull(ticket);
+    }
+
+    @Test
+    public void should_print_message_when_fetch_given_unrecognized_ticket() {
+        // Given
+        ParkingLot parkingLot = new ParkingLot(1);
+        Ticket ticket = new Ticket(new Car("C123456"));
+
+        // When
+        parkingLot.fetch(ticket);
+
+        // Then
+        assertTrue((systemOut()).contains("Unrecognized parking ticket."));
+    }
+
+    @Test
+    public void should_print_message_when_fetch_given_used_ticket() {
+        // Given
+        ParkingLot parkingLot = new ParkingLot(1);
+        Car car = new Car("A12345");
+        Ticket ticket = parkingLot.park(car);
+        parkingLot.fetch(ticket);
+
+        // When
+        parkingLot.fetch(ticket);
+
+        // Then
+        assertTrue((systemOut()).contains("Unrecognized parking ticket."));
+    }
+
+    @Test
+    public void should_print_message_when_park_given_no_space() {
+        // Given
+        ParkingLot parkingLot = new ParkingLot(1);
+        Car car1 = new Car("A12345");
+        Car car2 = new Car("B12345");
+        parkingLot.park(car1);
+
+        // When
+        Ticket ticket = parkingLot.park(car2);
+
+        // Then
+        assertTrue((systemOut()).contains("No available position."));
+    }
+
+    private String systemOut() {
+        return outContent.toString();
     }
 }

@@ -3,7 +3,7 @@ package com.parkinglot;
 import java.util.Objects;
 
 public class Ticket {
-    private Car car;
+    private final Car car;
 
     public Ticket(Car car) {
         this.car = car;
