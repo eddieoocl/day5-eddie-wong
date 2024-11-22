@@ -10,19 +10,18 @@ public class ParkingLot {
         this.capacity = capacity;
     }
 
-    public Ticket park(Car car) {
+    public Ticket park(Car car) throws NoAvailablePositionException {
         if (this.isFull()) {
-            System.out.println("No available position.");
-            return null;
+            throw new NoAvailablePositionException();
         }
         Ticket ticket = getTicket(car);
         parkingRecords.put(ticket, car);
         return ticket;
     }
 
-    public Car fetch(Ticket ticket) {
+    public Car fetch(Ticket ticket) throws UnrecognizedTicketException {
         if (!parkingRecords.containsKey(ticket)) {
-            System.out.println("Unrecognized parking ticket.");
+            throw new UnrecognizedTicketException();
         }
         return parkingRecords.remove(ticket);
     }

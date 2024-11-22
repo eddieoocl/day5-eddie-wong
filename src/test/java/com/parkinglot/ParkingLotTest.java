@@ -22,11 +22,16 @@ public class ParkingLotTest {
         ParkingLot parkingLot = new ParkingLot(10);
         Car car = new Car("A12345");
 
-        // When
-        Ticket ticket = parkingLot.park(car);
+        try {
+            // When
+            Ticket ticket = parkingLot.park(car);
 
-        // Then
-        assertNotNull(ticket);
+            // Then
+            assertNotNull(ticket);
+        } catch (NoAvailablePositionException exception) {
+            fail();
+            return;
+        }
     }
 
     @Test
@@ -34,13 +39,24 @@ public class ParkingLotTest {
         // Given
         ParkingLot parkingLot = new ParkingLot(10);
         Car car = new Car("A12345");
-        Ticket ticket = parkingLot.park(car);
+        Ticket ticket;
+
+        try {
+            // When
+            ticket = parkingLot.park(car);
+        } catch (NoAvailablePositionException exception) {
+            fail();
+            return;
+        }
 
         // When
-        Car fetchedCar = parkingLot.fetch(ticket);
-
-        // Then
-        assertNotNull(fetchedCar);
+        try {
+            Car fetchedCar = parkingLot.fetch(ticket);
+            assertNotNull(fetchedCar);
+        } catch (UnrecognizedTicketException exception) {
+            fail();
+            return;
+        }
     }
 
     @Test
@@ -48,103 +64,87 @@ public class ParkingLotTest {
         // Given
         ParkingLot parkingLot = new ParkingLot(10);
         Car car1 = new Car("A12345");
-        Ticket ticket1 = parkingLot.park(car1);
         Car car2 = new Car("B12345");
-        Ticket ticket2 = parkingLot.park(car2);
+        Ticket ticket1;
+        Ticket ticket2;
+        try {
+            ticket1 = parkingLot.park(car1);
+            ticket2 = parkingLot.park(car2);
+        } catch (NoAvailablePositionException exception) {
+            fail();
+            return;
+        }
 
         // When
-        Car fetchedCar1 = parkingLot.fetch(ticket1);
-        Car fetchedCar2 = parkingLot.fetch(ticket2);
-
         // Then
-        assertEquals(car1, fetchedCar1);
-        assertEquals(car2, fetchedCar2);
+        try {
+            Car fetchedCar1 = parkingLot.fetch(ticket1);
+            Car fetchedCar2 = parkingLot.fetch(ticket2);
+            assertEquals(car1, fetchedCar1);
+            assertEquals(car2, fetchedCar2);
+        } catch (UnrecognizedTicketException exception) {
+            fail();
+        }
     }
 
     @Test
-    public void should_return_null_when_fetch_given_wrong_ticket() {
-        // Given
-        ParkingLot parkingLot = new ParkingLot(10);
-        Ticket ticket = new Ticket(new Car("C123456"));
-
-        // When
-        Car car = parkingLot.fetch(ticket);
-
-        // Then
-        assertNull(car);
-    }
-
-    @Test
-    public void should_return_null_when_fetch_given_used_ticket() {
-        // Given
-        ParkingLot parkingLot = new ParkingLot(10);
-        Car car = new Car("A12345");
-        Ticket ticket = parkingLot.park(car);
-        parkingLot.fetch(ticket);
-
-        // When
-        Car fetchedCar = parkingLot.fetch(ticket);
-
-        // Then
-        assertNull(fetchedCar);
-    }
-
-    @Test
-    public void should_return_null_when_park_given_parking_lot_is_full() {
-        // Given
-        ParkingLot parkingLot = new ParkingLot(1);
-        Car car1 = new Car("A12345");
-        Car car2 = new Car("B12345");
-        parkingLot.park(car1);
-
-        // When
-        Ticket ticket = parkingLot.park(car2);
-
-        // Then
-        assertNull(ticket);
-    }
-
-    @Test
-    public void should_print_message_when_fetch_given_unrecognized_ticket() {
+    public void should_throw_error_message_when_fetch_given_unrecognized_ticket() {
         // Given
         ParkingLot parkingLot = new ParkingLot(1);
         Ticket ticket = new Ticket(new Car("C123456"));
 
         // When
-        parkingLot.fetch(ticket);
+        UnrecognizedTicketException exception = assertThrows(UnrecognizedTicketException.class, () -> {
+            parkingLot.fetch(ticket);
+        });
 
         // Then
-        assertTrue((systemOut()).contains("Unrecognized parking ticket."));
+        assertEquals(exception.getMessage(), "Unrecognized parking ticket.");
     }
 
     @Test
-    public void should_print_message_when_fetch_given_used_ticket() {
+    public void should_throw_error_message_when_fetch_given_used_ticket() {
         // Given
         ParkingLot parkingLot = new ParkingLot(1);
         Car car = new Car("A12345");
-        Ticket ticket = parkingLot.park(car);
-        parkingLot.fetch(ticket);
+        Ticket ticket;
+
+        try {
+            ticket = parkingLot.park(car);
+        } catch (NoAvailablePositionException exception) {
+            fail();
+            return;
+        }
+
+        try {
+            parkingLot.fetch(ticket);
+        } catch (UnrecognizedTicketException exception) {
+            fail();
+            return;
+        }
 
         // When
-        parkingLot.fetch(ticket);
+        UnrecognizedTicketException exception = assertThrows(UnrecognizedTicketException.class, () -> {
+            parkingLot.fetch(ticket);
+        });
 
         // Then
-        assertTrue((systemOut()).contains("Unrecognized parking ticket."));
+        assertEquals(exception.getMessage(), "Unrecognized parking ticket.");
     }
 
     @Test
-    public void should_print_message_when_park_given_no_space() {
+    public void should_throw_error_message_when_park_given_no_space() {
         // Given
-        ParkingLot parkingLot = new ParkingLot(1);
-        Car car1 = new Car("A12345");
-        Car car2 = new Car("B12345");
-        parkingLot.park(car1);
+        ParkingLot parkingLot = new ParkingLot(0);
+        Car car = new Car("A12345");
 
         // When
-        Ticket ticket = parkingLot.park(car2);
+        NoAvailablePositionException exception = assertThrows(NoAvailablePositionException.class, () -> {
+            parkingLot.park(car);
+        });
 
         // Then
-        assertTrue((systemOut()).contains("No available position."));
+        assertEquals(exception.getMessage(), "No available position.");
     }
 
     private String systemOut() {
