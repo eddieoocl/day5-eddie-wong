@@ -33,4 +33,8 @@ public class ParkingLot {
     private boolean isFull() {
         return parkingRecords.size() >= this.capacity;
     }
+
+    public int getSize() {
+        return this.parkingRecords.size();
+    }
 }
