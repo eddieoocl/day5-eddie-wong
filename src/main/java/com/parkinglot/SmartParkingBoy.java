@@ -1,6 +1,7 @@
 package com.parkinglot;
 
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.stream.Collectors;
 
 public class SmartParkingBoy extends ParkingBoy implements ParkingBoyStrategy {
@@ -13,12 +14,10 @@ public class SmartParkingBoy extends ParkingBoy implements ParkingBoyStrategy {
 
     @Override
     public Ticket park(Car car) throws NoAvailablePositionException {
-        ParkingLot parkingLot = this.getParkingLots().stream()
-                .sorted((parkingLot1, parkingLot2) -> parkingLot2.getAvailableCapacity() - parkingLot1.getAvailableCapacity())
-                .filter(pl -> !pl.isFull()).findFirst().orElse(null);
-        if (parkingLot == null) {
-            throw new NoAvailablePositionException();
-        }
-        return parkingLot.park(car);
+        return this.getParkingLots().stream()
+                .sorted(Comparator.comparingInt(ParkingLot::getAvailableCapacity).reversed())
+                .filter(pl -> !pl.isFull()).findFirst()
+                .orElseThrow(NoAvailablePositionException::new)
+                .park(car);
     }
 }

@@ -1,5 +1,7 @@
 package com.parkinglot;
 
+import java.util.Comparator;
+
 public class SuperParkingBoy extends ParkingBoy implements ParkingBoyStrategy {
     public SuperParkingBoy() {
     }
@@ -10,12 +12,10 @@ public class SuperParkingBoy extends ParkingBoy implements ParkingBoyStrategy {
 
     @Override
     public Ticket park(Car car) throws NoAvailablePositionException {
-        ParkingLot parkingLot = this.getParkingLots().stream()
-                .sorted((parkingLot1, parkingLot2) -> Float.compare(parkingLot2.getAvailablePositionRate(), parkingLot1.getAvailablePositionRate()))
-                .filter(pl -> !pl.isFull()).findFirst().orElse(null);
-        if (parkingLot == null) {
-            throw new NoAvailablePositionException();
-        }
-        return parkingLot.park(car);
+        return this.getParkingLots().stream()
+                .sorted(Comparator.comparingDouble(ParkingLot::getAvailablePositionRate).reversed())
+                .filter(pl -> !pl.isFull()).findFirst()
+                .orElseThrow(NoAvailablePositionException::new)
+                .park(car);
     }
 }
